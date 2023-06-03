@@ -1,8 +1,10 @@
 package com.cydeo.service.impl;
 
+import com.cydeo.enums.AccountType;
 import com.cydeo.exception.BadRequestException;
 import com.cydeo.model.Account;
 import com.cydeo.model.Transaction;
+import com.cydeo.repository.AccountOwnershipException;
 import com.cydeo.repository.AccountRepository;
 import com.cydeo.service.TransactionService;
 import org.springframework.stereotype.Component;
@@ -30,8 +32,18 @@ public class TransactionServiceImpl implements TransactionService {
         - if both accounts are checking, if not, one of them saving, it needs to be same user id
          */
         validateAccount(sender, receiver);
+        checkAccountOwnership(sender, receiver);
 
         return null;
+    }
+
+    private void checkAccountOwnership(Account sender, Account receiver) {
+        // check if one of the accounts is saving, and user of sender and receiver are not the same
+        // throw AccountOwnershipException
+        if ((sender.getAccountType().equals(AccountType.SAVING) || receiver.getAccountType().equals(AccountType.SAVING))
+        && !sender.getUserId().equals(receiver.getUserId())){
+            throw new AccountOwnershipException("Since you are using a savings account, the sender and receiver userId must be different.");
+        }
     }
 
     private void validateAccount(Account sender, Account receiver) {
