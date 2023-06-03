@@ -49,6 +49,7 @@ public class TransactionServiceImpl implements TransactionService {
             throw new BadRequestException("Sender account needs to be different than receiver");
         }
 
+        //verify if we have sender and receiver in database
         findAccountById(sender.getId());
         findAccountById(receiver.getId());
 
