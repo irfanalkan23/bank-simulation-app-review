@@ -2,10 +2,12 @@ package com.cydeo.service.impl;
 
 import com.cydeo.enums.AccountType;
 import com.cydeo.exception.BadRequestException;
+import com.cydeo.exception.BalanceNotSufficientException;
 import com.cydeo.model.Account;
 import com.cydeo.model.Transaction;
-import com.cydeo.repository.AccountOwnershipException;
+import com.cydeo.exception.AccountOwnershipException;
 import com.cydeo.repository.AccountRepository;
+import com.cydeo.repository.TransactionRepository;
 import com.cydeo.service.TransactionService;
 import org.springframework.stereotype.Component;
 
@@ -18,9 +20,11 @@ import java.util.UUID;
 public class TransactionServiceImpl implements TransactionService {
 
     private final AccountRepository accountRepository;
+    private final TransactionRepository transactionRepository;
 
-    public TransactionServiceImpl(AccountRepository accountRepository) {
+    public TransactionServiceImpl(AccountRepository accountRepository, TransactionRepository transactionRepository) {
         this.accountRepository = accountRepository;
+        this.transactionRepository = transactionRepository;
     }
 
     @Override
@@ -33,8 +37,40 @@ public class TransactionServiceImpl implements TransactionService {
          */
         validateAccount(sender, receiver);
         checkAccountOwnership(sender, receiver);
+        executeBalanceAndUpdateIfRequired(amount,sender,receiver);
 
-        return null;
+        /*
+        After all validations are completed, and money is transferred, we need to create
+        Transaction object and save/return it.
+         */
+        Transaction transaction = Transaction.builder()
+//                .sender(UUID.randomUUID())
+                .sender(sender.getId())
+//                .receiver(UUID.randomUUID())
+                .receiver(receiver.getId())
+                .amount(amount)
+                .message(message)
+                .creationDate(creationDate)
+                .build();
+
+        return transactionRepository.save(transaction);
+    }
+
+    private void executeBalanceAndUpdateIfRequired(BigDecimal amount, Account sender, Account receiver) {
+        if (checkSenderBalance(sender,amount)){
+            //make balance transfer between sender and receiver
+            sender.setBalance(sender.getBalance().subtract(amount));
+            receiver.setBalance(receiver.getBalance().add(amount));
+        } else {
+            //throw BalanceNotSufficientException
+            throw new BalanceNotSufficientException("Balance is not enough for this transfer.");
+        }
+    }
+
+    private boolean checkSenderBalance(Account sender, BigDecimal amount) {
+        //verify sender has enough balance to send
+        return sender.getBalance().compareTo(amount) >= 0;
+//        return sender.getBalance().subtract(amount).compareTo(BigDecimal.ZERO) >= 0;
     }
 
     private void checkAccountOwnership(Account sender, Account receiver) {
