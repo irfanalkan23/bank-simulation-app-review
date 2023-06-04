@@ -1,5 +1,6 @@
 package com.cydeo.repository;
 
+import com.cydeo.model.Account;
 import com.cydeo.model.Transaction;
 import org.springframework.stereotype.Component;
 
@@ -14,5 +15,9 @@ public class TransactionRepository {
     public Transaction save(Transaction transaction){
         transactionList.add(transaction);
         return transaction;
+    }
+
+    public List<Transaction> findAll() {
+        return transactionList;
     }
 }
