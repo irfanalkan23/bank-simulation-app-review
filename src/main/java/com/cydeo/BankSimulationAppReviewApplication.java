@@ -20,7 +20,7 @@ public class BankSimulationAppReviewApplication {
         ApplicationContext container = SpringApplication.run(BankSimulationAppReviewApplication.class, args);
 
         //the following part is for simulating the UI and testing the app
-        //get account and transaction service beans
+/*        //get account and transaction service beans
         AccountService accountService = container.getBean(AccountService.class);
         TransactionService transactionService = container.getBean(TransactionService.class);
 
@@ -36,6 +36,7 @@ public class BankSimulationAppReviewApplication {
         System.out.println(transactionService.findAllTransaction().get(0));
 
         accountService.listAllAccount().forEach(System.out::println);
+*/
     }
 
 }
