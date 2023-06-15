@@ -21,7 +21,7 @@ import java.util.UUID;
 @Component
 public class TransactionServiceImpl implements TransactionService {
 
-    @Value("${under_construction}")
+    @Value("${under_construction}")         // this is how we read from application.properties !
     private boolean underConstruction;
 
     private final AccountRepository accountRepository;

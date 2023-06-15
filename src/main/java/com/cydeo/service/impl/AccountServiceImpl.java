@@ -38,6 +38,6 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public List<Account> listAllAccount() {
-        return accountRepository.findAll();
+        return accountRepository.findAll();     //after creating DB, findAll() will be replaced by corresponding method name
     }
 }
