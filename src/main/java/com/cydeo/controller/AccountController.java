@@ -20,4 +20,15 @@ public class AccountController {
         return "/account/index";
     }
 
+    @GetMapping("/create-form")
+    public String getCreateForm(){
+        // provide empty account object
+        // account type enum needs to fill dropdown
+        return "/account/create-account";
+    }
+
+    // create method to capture information from UI,
+    // print them on the console
+    // trigger createAccount method, create the account based on user input
+
 }
