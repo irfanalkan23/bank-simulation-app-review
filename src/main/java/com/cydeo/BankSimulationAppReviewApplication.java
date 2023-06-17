@@ -25,10 +25,10 @@ public class BankSimulationAppReviewApplication {
         TransactionService transactionService = container.getBean(TransactionService.class);
 
         //create accounts: sender and receiver
-        Account sender = accountService.createNewAccount(BigDecimal.valueOf(70),new Date(), AccountType.CHECKING,1L);
-        Account receiver = accountService.createNewAccount(BigDecimal.valueOf(50),new Date(), AccountType.CHECKING,2L);
-        Account receiver2 = accountService.createNewAccount(BigDecimal.valueOf(432),new Date(), AccountType.SAVING,123L);
-        Account receiver3 = accountService.createNewAccount(BigDecimal.valueOf(6453),new Date(), AccountType.CHECKING,125L);
+//        Account sender = accountService.createNewAccount(BigDecimal.valueOf(70),new Date(), AccountType.CHECKING,1L);
+//        Account receiver = accountService.createNewAccount(BigDecimal.valueOf(50),new Date(), AccountType.CHECKING,2L);
+//        Account receiver2 = accountService.createNewAccount(BigDecimal.valueOf(432),new Date(), AccountType.SAVING,123L);
+//        Account receiver3 = accountService.createNewAccount(BigDecimal.valueOf(6453),new Date(), AccountType.CHECKING,125L);
 
 //        accountService.listAllAccount().forEach(System.out::println);
 //
