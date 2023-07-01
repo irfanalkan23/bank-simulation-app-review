@@ -43,6 +43,8 @@
                                 <select class="form-control"  id="dropOperator" th:field="*{accountType}">
                                     <option th:text="select" th:value="''"></option>
                                     <option th:each="type : ${accountTypes}" th:value="${type.name()}" th:text="${type.name()}"></option>
+                                    <!-- th:value to capture the selection -->
+                                    <!-- th:text to display the options -->
                                 </select>
                                 <span th:if="${#fields.hasErrors('accountType')}">
                                     <ul class="alert alert-danger">

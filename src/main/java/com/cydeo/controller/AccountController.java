@@ -7,9 +7,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.Date;
+import java.util.UUID;
 
 @Controller     // means "whenever user sends a request, (dispatch servlet) look at the methods inside this class"
 public class AccountController {
@@ -42,6 +44,18 @@ public class AccountController {
     public String getCreateForm2(@ModelAttribute("account") Account account){
         System.out.println(account.toString());
         accountService.createNewAccount(account.getBalance(),new Date(),account.getAccountType(),account.getUserId());
+        // where is the account Id and accountStatus ?
+        // they come from the builder : id(UUID.randomUUID()) and accountStatus(AccountStatus.ACTIVE)
+        return "redirect:/index";
+    }
+
+    @GetMapping("/delete/{id}")
+    public String deleteAccount(@PathVariable("id") UUID id){
+        System.out.println(id);
+
+        // trigger deleteAccount method
+        accountService.deleteAccount(id);
+
         return "redirect:/index";
     }
 

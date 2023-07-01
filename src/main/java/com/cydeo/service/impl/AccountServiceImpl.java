@@ -42,4 +42,12 @@ public class AccountServiceImpl implements AccountService {
     public List<Account> listAllAccount() {
         return accountRepository.findAll();     //after creating DB, findAll() will be replaced by corresponding method name
     }
+
+    @Override
+    public void deleteAccount(UUID id) {
+        //find the account object based on id
+        Account account = accountRepository.findById(id);
+        //update the accountStatus of that object
+        account.setAccountStatus(AccountStatus.DELETED);
+    }
 }
