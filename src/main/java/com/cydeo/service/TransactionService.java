@@ -6,6 +6,7 @@ import com.cydeo.model.Transaction;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 public interface TransactionService {
 
@@ -14,4 +15,6 @@ public interface TransactionService {
     List<Transaction> findAllTransaction();
 
     List<Transaction> last10Transactions();
+
+    List<Transaction> findTransactionListById(UUID id);
 }
