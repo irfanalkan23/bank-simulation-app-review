@@ -33,7 +33,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public Transaction makeTransaction(Account sender, Account receiver, BigDecimal amount, Date creationDate, String message) {
+    public Transaction makeTransfer(Account sender, Account receiver, BigDecimal amount, Date creationDate, String message) {
         /*
         - if sender or receiver is null?
         - if sender and receiver is NOT same account?
@@ -123,5 +123,11 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public List<Transaction> findAllTransaction() {
         return transactionRepository.findAll();
+    }
+
+    @Override
+    public List<Transaction> last10Transactions() {
+        // latest 10 transactions
+        return transactionRepository.findLast10Transactions();
     }
 }
