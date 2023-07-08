@@ -3,8 +3,10 @@ package com.cydeo.controller;
 import com.cydeo.enums.AccountType;
 import com.cydeo.model.Account;
 import com.cydeo.service.AccountService;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,7 +43,15 @@ public class AccountController {
     // print them on the console
     // trigger createAccount method, create the account based on user input
     @PostMapping("/create")
-    public String getCreateForm2(@ModelAttribute("account") Account account){
+    public String getCreateForm2(@Valid @ModelAttribute("account") Account account, BindingResult bindingResult, Model model){
+        //BindingResult parameter should be right after @Valid object
+        if (bindingResult.hasErrors()){
+            //return the same page, and fill the dropdown (accountTypes)
+            //we don't create an object (it will be below out of the if statement) if there is an error in filling the form
+            model.addAttribute("accountTypes", AccountType.values());
+            return "/account/create-account";
+        }
+
         System.out.println(account.toString());
         accountService.createNewAccount(account.getBalance(),new Date(),account.getAccountType(),account.getUserId());
         // where is the account Id and accountStatus ?

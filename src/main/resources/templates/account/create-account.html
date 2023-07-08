@@ -21,6 +21,8 @@
                             <div class="form-group blu-margin">
                                 <label for="userId" class="col-form-label">UserId</label>
                                 <input th:field="*{userId}" type="text" class="form-control" id="userId" placeholder="user id">
+                                <!-- <div> is a block-level element whereas a <span> is an inline-level element. -->
+                                <!-- # : we can reach fields object methods -->
                                 <span th:if="${#fields.hasErrors('userId')}">
                                     <ul class="alert alert-danger">
                                         <li th:each="err : ${#fields.errors('userId')}" th:text="${err}"></li>
