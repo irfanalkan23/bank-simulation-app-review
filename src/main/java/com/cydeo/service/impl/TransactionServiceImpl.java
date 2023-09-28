@@ -49,15 +49,7 @@ public class TransactionServiceImpl implements TransactionService {
         After all validations are completed, and money is transferred, we need to create
         Transaction object and save/return it.
          */
-            TransactionDTO transactionDTO = TransactionDTO.builder()
-//                .sender(UUID.randomUUID())
-                    .sender(sender.getId())
-//                .receiver(UUID.randomUUID())
-                    .receiver(receiver.getId())
-                    .amount(amount)
-                    .message(message)
-                    .creationDate(creationDate)
-                    .build();
+            TransactionDTO transactionDTO = new TransactionDTO();   // TODO: 28/09/2023 change new TransactionDTO()
 
             return transactionRepository.save(transactionDTO);
         } else{
