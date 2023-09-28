@@ -1,7 +1,7 @@
 package com.cydeo.controller;
 
 import com.cydeo.enums.AccountType;
-import com.cydeo.model.Account;
+import com.cydeo.dto.AccountDTO;
 import com.cydeo.service.AccountService;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
@@ -33,7 +33,7 @@ public class AccountController {
     @GetMapping("/create-form")
     public String getCreateForm(Model model){
         // provide empty account object
-        model.addAttribute("account", Account.builder().build());
+        model.addAttribute("account", AccountDTO.builder().build());
         // account type enum needs to fill dropdown
         model.addAttribute("accountTypes", AccountType.values());
         return "/account/create-account";
@@ -43,7 +43,7 @@ public class AccountController {
     // print them on the console
     // trigger createAccount method, create the account based on user input
     @PostMapping("/create")
-    public String getCreateForm2(@Valid @ModelAttribute("account") Account account, BindingResult bindingResult, Model model){
+    public String getCreateForm2(@Valid @ModelAttribute("account") AccountDTO accountDTO, BindingResult bindingResult, Model model){
         //BindingResult parameter should be right after @Valid object
         if (bindingResult.hasErrors()){
             //return the same page, and fill the dropdown (accountTypes)
@@ -52,8 +52,8 @@ public class AccountController {
             return "/account/create-account";
         }
 
-        System.out.println(account.toString());
-        accountService.createNewAccount(account.getBalance(),new Date(),account.getAccountType(),account.getUserId());
+        System.out.println(accountDTO.toString());
+        accountService.createNewAccount(accountDTO.getBalance(),new Date(), accountDTO.getAccountType(), accountDTO.getUserId());
         // where is the account Id and accountStatus ?
         // they come from the builder : id(UUID.randomUUID()) and accountStatus(AccountStatus.ACTIVE)
         return "redirect:/index";

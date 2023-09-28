@@ -1,8 +1,8 @@
 package com.cydeo.service.impl;
 
+import com.cydeo.dto.AccountDTO;
 import com.cydeo.enums.AccountStatus;
 import com.cydeo.enums.AccountType;
-import com.cydeo.model.Account;
 import com.cydeo.repository.AccountRepository;
 import com.cydeo.service.AccountService;
 import org.springframework.stereotype.Component;
@@ -22,9 +22,9 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Account createNewAccount(BigDecimal balance, Date creationDate, AccountType accountType, Long userId) {
+    public AccountDTO createNewAccount(BigDecimal balance, Date creationDate, AccountType accountType, Long userId) {
         //we need to create account object
-        Account account = Account.builder()
+        AccountDTO accountDTO = AccountDTO.builder()
                 .id(UUID.randomUUID())
                 .balance(balance)
                 .creationDate(creationDate)
@@ -35,32 +35,32 @@ public class AccountServiceImpl implements AccountService {
 
         //save into the database
         //return the object created
-        return accountRepository.save(account);
+        return accountRepository.save(accountDTO);
     }
 
     @Override
-    public List<Account> listAllAccount() {
+    public List<AccountDTO> listAllAccount() {
         return accountRepository.findAll();     //after creating DB, findAll() will be replaced by corresponding method name
     }
 
     @Override
     public void deleteAccount(UUID id) {
         //find the account object based on id
-        Account account = accountRepository.findById(id);
+        AccountDTO accountDTO = accountRepository.findById(id);
         //update the accountStatus of that object
-        account.setAccountStatus(AccountStatus.DELETED);
+        accountDTO.setAccountStatus(AccountStatus.DELETED);
     }
 
     @Override
     public void activateAccount(UUID id) {
         //find the account object based on id
-        Account account = accountRepository.findById(id);
+        AccountDTO accountDTO = accountRepository.findById(id);
         //update the accountStatus of that object
-        account.setAccountStatus(AccountStatus.ACTIVE);
+        accountDTO.setAccountStatus(AccountStatus.ACTIVE);
     }
 
     @Override
-    public Account retrieveById(UUID id) {
+    public AccountDTO retrieveById(UUID id) {
         return accountRepository.findById(id);
     }
 }
