@@ -33,7 +33,7 @@ public class AccountController {
     @GetMapping("/create-form")
     public String getCreateForm(Model model){
         // provide empty account object
-        model.addAttribute("account", AccountDTO.builder().build());
+        model.addAttribute("account", new AccountDTO());
         // account type enum needs to fill dropdown
         model.addAttribute("accountTypes", AccountType.values());
         return "/account/create-account";
@@ -60,7 +60,7 @@ public class AccountController {
     }
 
     @GetMapping("/delete/{id}")
-    public String deleteAccount(@PathVariable("id") UUID id){
+    public String deleteAccount(@PathVariable("id") Long id){
         System.out.println(id);
 
         // trigger deleteAccount method
@@ -70,7 +70,7 @@ public class AccountController {
     }
 
     @GetMapping("/activate/{id}")
-    public String activateAccount(@PathVariable("id") UUID id){
+    public String activateAccount(@PathVariable("id") Long id){
         accountService.activateAccount(id);
         return "redirect:/index";
     }

@@ -23,7 +23,7 @@ public class AccountRepository {
         return accountDTOList;
     }
 
-    public AccountDTO findById(UUID id) {
+    public AccountDTO findById(Long id) {
         //write a method that finds the account inside the list, if not
         //throws RecordNotFoundException
 

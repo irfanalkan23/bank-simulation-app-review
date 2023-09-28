@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.Date;
-import java.util.UUID;
 
 @Controller
 public class TransactionController {
@@ -31,7 +30,7 @@ public class TransactionController {
     public String getMakeTransfer(Model model){
         // what do we need to provide (to UI) to make the transfer happen?
         // --> we need to provide empty transaction object
-        model.addAttribute("transaction", TransactionDTO.builder().build());
+        model.addAttribute("transaction", new TransactionDTO());
         // --> we need all accounts (for the sender and receiver dropdowns)
         model.addAttribute("accounts", accountService.listAllAccount());
         // --> we need list of transactions (last 10) to fill table. (business logic missing)
@@ -54,8 +53,10 @@ public class TransactionController {
 
         // I have UUID of accounts but I need to provide Account object
         // I need to find Accounts based on the ID that I have and use as a parameter to makeTransfer method
-        AccountDTO sender = accountService.retrieveById(transactionDTO.getSender());
-        AccountDTO receiver = accountService.retrieveById(transactionDTO.getReceiver());
+        AccountDTO sender = accountService.retrieveById(transactionDTO.getSender().getId());
+        //.getId() added with orm. because, getSender() was UUID, now AccountDTO
+        AccountDTO receiver = accountService.retrieveById(transactionDTO.getReceiver().getId());    //.getId() added with orm
+        //.getId() added with orm. because, getReceiver() was UUID, now AccountDTO
         transactionService.makeTransfer(sender,receiver, transactionDTO.getAmount(),new Date(), transactionDTO.getMessage());
 
         return "redirect:/make-transfer";
@@ -66,7 +67,7 @@ public class TransactionController {
     // endpoint --> transaction/{id}
     // return transaction/transactions page
     @GetMapping("/transaction/{id}")
-    public String getTransactionList(@PathVariable("id") UUID id, Model model){
+    public String getTransactionList(@PathVariable("id") Long id, Model model){
         System.out.println(id);
         //get the list of transactions based on id and return as a model attribute
         //TASK - Complete the method (service and repository)
