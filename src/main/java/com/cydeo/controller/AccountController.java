@@ -53,7 +53,7 @@ public class AccountController {
         }
 
         System.out.println(accountDTO.toString());
-        accountService.createNewAccount(accountDTO.getBalance(),new Date(), accountDTO.getAccountType(), accountDTO.getUserId());
+        accountService.createNewAccount(accountDTO);
         // where is the account Id and accountStatus ?
         // they come from the builder : id(UUID.randomUUID()) and accountStatus(AccountStatus.ACTIVE)
         return "redirect:/index";

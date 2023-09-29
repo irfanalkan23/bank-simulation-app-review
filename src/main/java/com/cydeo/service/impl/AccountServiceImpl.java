@@ -26,13 +26,14 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public AccountDTO createNewAccount(BigDecimal balance, Date creationDate, AccountType accountType, Long userId) {
-        //we need to create account object
-        AccountDTO accountDTO = new AccountDTO(); // TODO: 28/09/2023  
+    public void createNewAccount(AccountDTO accountDTO) {
 
-        //save into the database
-        //return the object created
-        return accountRepository.save(accountDTO);
+        // we will complete the DTO, because UI is not providing all the fields
+        accountDTO.setAccountStatus(AccountStatus.ACTIVE);
+        accountDTO.setCreationDate(new Date());
+
+        // convert it to entity and save it
+        accountRepository.save(accountMapper.convertToEntity(accountDTO));
     }
 
     @Override
