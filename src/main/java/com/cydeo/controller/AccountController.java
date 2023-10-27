@@ -33,7 +33,9 @@ public class AccountController {
     @GetMapping("/create-form")
     public String getCreateForm(Model model){
         // provide empty account object
-        model.addAttribute("account", new AccountDTO());
+        model.addAttribute("accountDTO", new AccountDTO());
+        //replaced "account" with "accountDTO" (when implementing ORM)
+
         // account type enum needs to fill dropdown
         model.addAttribute("accountTypes", AccountType.values());
         return "/account/create-account";
@@ -43,7 +45,9 @@ public class AccountController {
     // print them on the console
     // trigger createAccount method, create the account based on user input
     @PostMapping("/create")
-    public String getCreateForm2(@Valid @ModelAttribute("account") AccountDTO accountDTO, BindingResult bindingResult, Model model){
+    public String getCreateForm2(@Valid @ModelAttribute("accountDTO") AccountDTO accountDTO, BindingResult bindingResult, Model model){
+        //replaced "account" with "accountDTO" above (when implementing ORM)
+
         //BindingResult parameter should be right after @Valid object
         if (bindingResult.hasErrors()){
             //return the same page, and fill the dropdown (accountTypes)
@@ -52,7 +56,7 @@ public class AccountController {
             return "/account/create-account";
         }
 
-        System.out.println(accountDTO.toString());
+        System.out.println(accountDTO);
         accountService.createNewAccount(accountDTO);
         // where is the account Id and accountStatus ?
         // they come from the builder : id(UUID.randomUUID()) and accountStatus(AccountStatus.ACTIVE)

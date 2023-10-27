@@ -7,8 +7,10 @@ import com.cydeo.exception.BadRequestException;
 import com.cydeo.exception.BalanceNotSufficientException;
 import com.cydeo.exception.UnderConstructionException;
 import com.cydeo.exception.AccountOwnershipException;
+import com.cydeo.mapper.TransactionMapper;
 import com.cydeo.repository.AccountRepository;
 import com.cydeo.repository.TransactionRepository;
+import com.cydeo.service.AccountService;
 import com.cydeo.service.TransactionService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class TransactionServiceImpl implements TransactionService {
@@ -23,12 +26,16 @@ public class TransactionServiceImpl implements TransactionService {
     @Value("${under_construction}")         // this is how we read from application.properties !
     private boolean underConstruction;
 
-    private final AccountRepository accountRepository;
+//    private final AccountRepository accountRepository;
+    //Between different service, don't communicate directly with other repository
+    private final AccountService accountService;
     private final TransactionRepository transactionRepository;
+    private final TransactionMapper transactionMapper;
 
-    public TransactionServiceImpl(AccountRepository accountRepository, TransactionRepository transactionRepository) {
-        this.accountRepository = accountRepository;
+    public TransactionServiceImpl(AccountRepository accountRepository, AccountService accountService, TransactionRepository transactionRepository, TransactionMapper transactionMapper) {
+        this.accountService = accountService;
         this.transactionRepository = transactionRepository;
+        this.transactionMapper = transactionMapper;
     }
 
     @Override
@@ -49,9 +56,9 @@ public class TransactionServiceImpl implements TransactionService {
         After all validations are completed, and money is transferred, we need to create
         Transaction object and save/return it.
          */
-            TransactionDTO transactionDTO = new TransactionDTO();   // TODO: 28/09/2023 change new TransactionDTO()
-
-            return transactionRepository.save(transactionDTO);
+            TransactionDTO transactionDTO = new TransactionDTO(sender,receiver,amount,message,creationDate);
+            transactionRepository.save(transactionMapper.convertToEntity(transactionDTO));
+            return transactionDTO;
         } else{
             throw new UnderConstructionException("App is under construction, try again later.");
         }
@@ -60,9 +67,25 @@ public class TransactionServiceImpl implements TransactionService {
 
     private void executeBalanceAndUpdateIfRequired(BigDecimal amount, AccountDTO sender, AccountDTO receiver) {
         if (checkSenderBalance(sender,amount)){
-            //make balance transfer between sender and receiver
+            //update sender and receiver balance
             sender.setBalance(sender.getBalance().subtract(amount));
             receiver.setBalance(receiver.getBalance().add(amount));
+
+            /* get the dto from database for both sender and receiver, update balance and save it
+            create accountService updateAccount and use it for save */
+
+            //find the sender account
+            AccountDTO senderAcc = accountService.retrieveById(sender.getId());
+            senderAcc.setBalance(sender.getBalance());
+            //save again to database
+            accountService.updateAccount(senderAcc);
+
+            //find the receiver account
+            AccountDTO receiverAcc = accountService.retrieveById(receiver.getId());
+            receiverAcc.setBalance(receiver.getBalance());
+            //save again to database
+            accountService.updateAccount(receiverAcc);
+
         } else {
             //throw BalanceNotSufficientException
             throw new BalanceNotSufficientException("Balance is not enough for this transfer.");
@@ -105,25 +128,30 @@ public class TransactionServiceImpl implements TransactionService {
 
     }
 
-    private void findAccountById(Long id) {
+    private AccountDTO findAccountById(Long id) {
         //I need accountRepository here; so, I inject private final AccountRepository above!
         //then, create constructor. add @Component
-        accountRepository.findById(id);     //create findById() method in AccountRepository
+        return accountService.retrieveById(id);     //create findById() method in AccountRepository
     }
 
     @Override
     public List<TransactionDTO> findAllTransaction() {
-        return transactionRepository.findAll();
+        //get transaction entity for all and return them as a list of transactionDTO
+        return transactionRepository.findAll().stream().map(transactionMapper::convertToDTO).collect(Collectors.toList());
     }
 
     @Override
     public List<TransactionDTO> last10Transactions() {
         // latest 10 transactions
-        return transactionRepository.findLast10Transactions();
+        //write a native query to get the result for last 10 transactions
+        //then convert it to dto and return
+        return transactionRepository.findLast10Transactions().stream().map(transactionMapper::convertToDTO).collect(Collectors.toList());
     }
 
     @Override
     public List<TransactionDTO> findTransactionListById(Long id) {
-        return transactionRepository.findTransactionListById(id);
+        //write a JPQL query to retrieve list of transactions by id
+        //convert to dto and return
+        return transactionRepository.findTransactionListById(id).stream().map(transactionMapper::convertToDTO).collect(Collectors.toList());
     }
 }

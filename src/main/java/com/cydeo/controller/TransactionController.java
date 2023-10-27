@@ -30,9 +30,9 @@ public class TransactionController {
     public String getMakeTransfer(Model model){
         // what do we need to provide (to UI) to make the transfer happen?
         // --> we need to provide empty transaction object
-        model.addAttribute("transaction", new TransactionDTO());
+        model.addAttribute("transactionDTO", new TransactionDTO());
         // --> we need all accounts (for the sender and receiver dropdowns)
-        model.addAttribute("accounts", accountService.listAllAccount());
+        model.addAttribute("accounts", accountService.listAllActiveAccounts());
         // --> we need list of transactions (last 10) to fill table. (business logic missing)
         model.addAttribute("lastTransactions", transactionService.last10Transactions());
 
@@ -43,7 +43,7 @@ public class TransactionController {
     // Write a post method, that takes transaction object from the method above
     // Complete the make transfer and return to the same page
     @PostMapping("/transfer")
-    public String postMakeTransfer(@Valid @ModelAttribute("transaction") TransactionDTO transactionDTO, BindingResult bindingResult, Model model){
+    public String postMakeTransfer(@Valid @ModelAttribute("transactionDTO") TransactionDTO transactionDTO, BindingResult bindingResult, Model model){
 
         if (bindingResult.hasErrors()){
             // we need all accounts (for the sender and receiver dropdowns)

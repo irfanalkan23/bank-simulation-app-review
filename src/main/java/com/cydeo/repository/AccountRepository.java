@@ -1,6 +1,7 @@
 package com.cydeo.repository;
 
 import com.cydeo.entity.Account;
+import com.cydeo.enums.AccountStatus;
 import com.cydeo.exception.RecordNotFoundException;
 import com.cydeo.dto.AccountDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,7 +14,6 @@ import java.util.UUID;
 
 @Repository //this is not must
 public interface AccountRepository extends JpaRepository<Account,Long> {
-
 
     //since we don't have a database now, we are simulating
 //    public static List<AccountDTO> accountDTOList = new ArrayList<>();
@@ -36,4 +36,7 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
 //                .findFirst()
 //                .orElseThrow(()->new RecordNotFoundException("Account not exist in the database."));
 //    }
+
+    //find accounts by status. make it dynamic instead of finding only ACTIVE accounts
+    List<Account> findByAccountStatus(AccountStatus accountStatus);
 }

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
@@ -51,21 +52,42 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public void deleteAccount(Long id) {
         //find the account object based on id
-        AccountDTO accountDTO = accountRepository.findById(id);
+        Account account = accountRepository.findById(id).get();
         //update the accountStatus of that object
-        accountDTO.setAccountStatus(AccountStatus.DELETED);
+        account.setAccountStatus(AccountStatus.DELETED);
+        //save the updated account object in database.
+        accountRepository.save(account);
     }
 
     @Override
     public void activateAccount(Long id) {
         //find the account object based on id
-        AccountDTO accountDTO = accountRepository.findById(id);
+        Account account = accountRepository.findById(id).get();
         //update the accountStatus of that object
-        accountDTO.setAccountStatus(AccountStatus.ACTIVE);
+        account.setAccountStatus(AccountStatus.ACTIVE);
+        //save the updated account object in database.
+        accountRepository.save(account);
     }
 
     @Override
     public AccountDTO retrieveById(Long id) {
-        return accountRepository.findById(id);
+        //find the account entity by id, convert to dto and return
+        return accountMapper.convertToDTO(accountRepository.findById(id).get());
     }
+
+    //return only the active accounts from database
+    @Override
+    public List<AccountDTO> listAllActiveAccounts() {
+        //get active accounts from repository
+        List<Account> accountList = accountRepository.findByAccountStatus(AccountStatus.ACTIVE);
+        //convert active accounts to dto and return
+        return accountList.stream().map(accountMapper::convertToDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public void updateAccount(AccountDTO accountDTO) {
+        accountRepository.save(accountMapper.convertToEntity(accountDTO));
+    }
+
+
 }
