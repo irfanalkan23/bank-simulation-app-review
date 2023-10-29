@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<!--      while implementing security, we added xmlns:sec -->
 
 <head>
   <meta charset="utf-8">
@@ -15,6 +17,10 @@
 <body>
 <div class="container my-5">
   <div class="row">
+    <!-- while implementing security, we added Logout button-->
+    <div>
+      <a class="dropdown-item" th:href="@{/logout}"><i class="fas fa-power-off mr-2"></i>Logout</a>
+    </div>
     <div class="col-md-6">
       <div th:if="${accountList.size()==0}">
         <h2>No Accounts yet!</h2>
@@ -29,7 +35,9 @@
             <th>Balance</th>
             <th>Account Type</th>
             <th>CreationDate</th>
-            <th>Delete</th>
+<!--            <th>Delete</th>-->
+            <!-- when implementing security, "only Admin should see Delete" -->
+            <th sec:authorize="hasAnyAuthority('Admin')">Delete</th>
             <th>Account Transactions</th>
           </tr>
           </thead>
@@ -40,7 +48,8 @@
             <td th:text="${accountDTO.balance}"></td>
             <td th:text="${accountDTO.accountType}"></td>
             <td th:text="${accountDTO.creationDate}"></td>
-            <td>
+            <!-- when implementing security; added sec:authorize="hasAnyAuthority('Admin')" below -->
+            <td sec:authorize="hasAnyAuthority('Admin')">
               <a th:if="${accountDTO.accountStatus.name()=='ACTIVE'}" class="btn btn-danger" th:href="@{/delete/{id}(id=${accountDTO.id})}">Delete</a>
               <!-- th:href="@{/delete/{id}}" trigger delete endpoint with id path variable -->
               <!-- th:href="@{/delete/{id}(id=${accountDTO.id})}" id value will be accountDTO.id -->
@@ -51,7 +60,8 @@
           </tbody>
         </table>
       </div>
-      <p class="my-5"><a th:href="@{/create-form}" class="btn btn-primary">Create Account<i class="fas fa-user-plus ml-2"></i></a></p>
+      <!-- when implementing security; added sec:authorize="hasAnyAuthority('Admin')" below -->
+      <p class="my-5"><a sec:authorize="hasAnyAuthority('Admin')" th:href="@{/create-form}" class="btn btn-primary">Create Account<i class="fas fa-user-plus ml-2"></i></a></p>
       <p class="my-5"><a th:href="@{/make-transfer}" class="btn btn-primary">Make Transfer<i class="fas fa-user-plus ml-2"></i></a></p>
     </div>
   </div>
