@@ -11,9 +11,11 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 public class SecurityConfig {
 
     private final SecurityService securityService;
+    private final AuthSuccessHandler authSuccessHandler;
 
-    public SecurityConfig(SecurityService securityService) {
+    public SecurityConfig(SecurityService securityService, AuthSuccessHandler authSuccessHandler) {
         this.securityService = securityService;
+        this.authSuccessHandler = authSuccessHandler;
     }
 
     @Bean
@@ -27,7 +29,9 @@ public class SecurityConfig {
                 )
                 .formLogin(formLoginConfigurer -> formLoginConfigurer
                         .loginPage("/login")
-                        .defaultSuccessUrl("/index")    //we will change to custom url later
+//                        .defaultSuccessUrl("/index")    //we will change to custom url later
+                        //complete success handler. admin: /index , cashier: /make-transfer
+                        .successHandler(authSuccessHandler)
                         .failureForwardUrl("/login?failure=true")
                         .permitAll()
                 )
